@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./lineman
+    container_name: web
+    command: python3 lineman/views.py
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - FLASK_DEBUG=1
+    network_mode: "host"
+    
+  worker:
+    build: ./train
+    container_name: worker
+    command: >
+      sh -c "celery --app=train.tasks.celery worker -Q station,speed --loglevel=info -E &&
+             celery beat --app=train.tasks.celery --loglevel=info"
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - FLASK_DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    depends_on:
+      - redis
+
+  listener:
+    build: ./central
+    container_name: listener
+    command: python3 central/events.py
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - FLASK_DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+      - LINEMAN_URL=http://localhost:5000/api/v1/barrier
+    depends_on:
+      - redis
+      - worker
+
+  redis:
+    image: redis:6-alpine

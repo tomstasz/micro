@@ -1,0 +1,17 @@
+Flask==1.1.2
+Flask-WTF==0.14.3
+Faker>=1.0.5,<1.1.0
+Flask-Migrate>=2.4.0,<2.5.0
+Flask-SQLAlchemy>=2.5.0
+black==19.3b0
+flask-marshmallow>=0.10.0,<1.0.0
+nose2>=0.9.1,<1.0.0
+marshmallow>=2.19.2
+marshmallow-sqlalchemy>=0.16.2,<0.20.0
+pytest==6.1.2
+pytest-flask
+requests
+redis==3.5.3
+docker-compose
+celery==4.4.7
+redis-server
