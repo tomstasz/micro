@@ -14,9 +14,7 @@ services:
   worker:
     build: ./train
     container_name: worker
-    command: >
-      sh -c "celery --app=train.tasks.celery worker -Q station,speed --loglevel=info -E &&
-             celery beat --app=train.tasks.celery --loglevel=info"
+    command: celery --app=train.tasks.celery worker -Q station,speed --loglevel=info -E
     volumes:
       - .:/usr/src/app
     environment:
@@ -25,6 +23,20 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379
     depends_on:
       - redis
+
+  scheduler:
+    build: ./train
+    container_name: scheduler
+    command: celery beat --app=train.tasks.celery --loglevel=info
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - FLASK_DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    depends_on:
+      - redis
+      - worker
 
   listener:
     build: ./central
@@ -40,6 +52,7 @@ services:
     depends_on:
       - redis
       - worker
+    network_mode: "host"
 
   redis:
     image: redis:6-alpine
