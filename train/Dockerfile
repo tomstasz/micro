@@ -17,5 +17,4 @@ WORKDIR /.
 COPY ./train /train
 COPY . .
 
-# CMD celery --app=train.tasks.celery worker -Q station,speed --loglevel=info -E && celery beat --app=train.tasks.celery --loglevel=info
-CMD start.sh
+CMD celery --app=train.tasks.celery worker -Q station,speed --loglevel=info -E && celery beat --app=train.tasks.celery --loglevel=info

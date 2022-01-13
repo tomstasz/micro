@@ -6,22 +6,26 @@ services:
     container_name: web
     command: python3 lineman/views.py
     volumes:
-      - .:/usr/src/app
+      - .:/code
     environment:
       - FLASK_DEBUG=1
-    network_mode: "host"
-    
+    ports: ["80:80", "5000:5000"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   worker:
     build: ./train
     container_name: worker
     command: celery --app=train.tasks.celery worker -Q station,speed --loglevel=info -E
     volumes:
-      - .:/usr/src/app
+      - .:/code
     environment:
       - FLASK_DEBUG=1
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
     depends_on:
+      - redis
+    links:
       - redis
 
   scheduler:
@@ -29,7 +33,7 @@ services:
     container_name: scheduler
     command: celery beat --app=train.tasks.celery --loglevel=info
     volumes:
-      - .:/usr/src/app
+      - .:/code
     environment:
       - FLASK_DEBUG=1
       - CELERY_BROKER_URL=redis://redis:6379
@@ -37,22 +41,26 @@ services:
     depends_on:
       - redis
       - worker
+    links:
+      - redis
 
   listener:
     build: ./central
     container_name: listener
     command: python3 central/events.py
     volumes:
-      - .:/usr/src/app
+      - .:/code
     environment:
       - FLASK_DEBUG=1
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
-      - LINEMAN_URL=http://localhost:5000/api/v1/barrier
+      - LINEMAN_URL=http://172.18.0.3:5000/api/v1/barrier
     depends_on:
       - redis
       - worker
-    network_mode: "host"
+    links:
+      - redis
+      - web
 
   redis:
     image: redis:6-alpine
