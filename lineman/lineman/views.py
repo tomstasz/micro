@@ -26,4 +26,4 @@ def barrier_operations():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="10.5.0.103", port="5002", debug=True)

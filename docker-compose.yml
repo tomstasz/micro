@@ -9,9 +9,11 @@ services:
       - .:/code
     environment:
       - FLASK_DEBUG=1
-    ports: ["80:80", "5000:5000"]
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:5002:5002"
+    networks:
+      micro_static:
+        ipv4_address: 10.5.0.103
 
   worker:
     build: ./train
@@ -27,6 +29,9 @@ services:
       - redis
     links:
       - redis
+    networks:
+      micro_static:
+        ipv4_address: 10.5.0.101
 
   scheduler:
     build: ./train
@@ -43,6 +48,9 @@ services:
       - worker
     links:
       - redis
+    networks:
+      micro_static:
+        ipv4_address: 10.5.0.102
 
   listener:
     build: ./central
@@ -54,13 +62,28 @@ services:
       - FLASK_DEBUG=1
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
-      - LINEMAN_URL=http://172.18.0.3:5000/api/v1/barrier
+      - LINEMAN_URL=http://10.5.0.103:5002/api/v1/barrier
+
     depends_on:
       - redis
       - worker
+      - web
     links:
       - redis
       - web
+    networks:
+      micro_static:
+        ipv4_address: 10.5.0.100
 
   redis:
     image: redis:6-alpine
+    networks:
+      micro_static:
+        ipv4_address: 10.5.0.104
+
+networks:
+  micro_static:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
