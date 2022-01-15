@@ -4,11 +4,13 @@ services:
   web:
     build: ./lineman
     container_name: web
-    command: python3 lineman/views.py
+    command: python3 lineman/main.py
     volumes:
       - .:/code
+      - ./lineman/lineman/barrier_status.db:/lineman/barrier_status.db
     environment:
       - FLASK_DEBUG=1
+      - TZ=Europe/Warsaw
     ports:
       - "127.0.0.1:5002:5002"
     networks:
@@ -23,6 +25,7 @@ services:
       - .:/code
     environment:
       - FLASK_DEBUG=1
+      - TZ=Europe/Warsaw
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
     depends_on:
@@ -41,6 +44,7 @@ services:
       - .:/code
     environment:
       - FLASK_DEBUG=1
+      - TZ=Europe/Warsaw
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
     depends_on:
@@ -60,6 +64,7 @@ services:
       - .:/code
     environment:
       - FLASK_DEBUG=1
+      - TZ=Europe/Warsaw
       - CELERY_BROKER_URL=redis://redis:6379
       - CELERY_RESULT_BACKEND=redis://redis:6379
       - LINEMAN_URL=http://10.5.0.103:5002/api/v1/barrier

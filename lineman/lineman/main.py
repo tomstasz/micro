@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request, abort
 from json import JSONDecodeError
 from models import Barrier, BarrierSchema
@@ -26,4 +27,7 @@ def barrier_operations():
 
 
 if __name__ == "__main__":
-    app.run(host="10.5.0.103", port="5002", debug=True)
+    if os.environ.get("LINEMAN_URL"):
+        app.run(host="10.5.0.103", port="5002", debug=True)
+    else:
+        app.run(host="0.0.0.0", port="5002", debug=True)

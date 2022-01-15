@@ -6,7 +6,7 @@ from celery import Celery
 from datetime import datetime as dt
 
 
-LINEMAN_URL = os.environ.get("LINEMAN_URL") or "http://localhost:5000/api/v1/barrier"
+LINEMAN_URL = os.environ.get("LINEMAN_URL") or "http://localhost:5002/api/v1/barrier"
 
 
 class Logger:

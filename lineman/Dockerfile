@@ -18,4 +18,4 @@ COPY ./lineman /lineman
 
 EXPOSE 5000
 
-CMD python3 lineman/views.py
+CMD python3 lineman/main.py
