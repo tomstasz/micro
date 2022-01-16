@@ -1,8 +1,7 @@
-# micro
+# micro_train
 Projekt składający się z trzech mikroserwisów: pociągu (train), centrali kolejowej (central) i dróżnika (lineman).
 
 ## TRAIN
-
 Aplikacja symuluje w sposób uproszczony pracę lokomotywy pociągu. Jej jedynym zadaniem
 jest wysyłanie komunikatów na serwer kolejkowy, nie posiada interfejsu HTTP.
 
@@ -10,7 +9,6 @@ jest wysyłanie komunikatów na serwer kolejkowy, nie posiada interfejsu HTTP.
 - Co 20 sekund wysyłany jest komunikat o stacji do której zbliża się pociąg (pobranej losowo ze zdefiniowanej listy).
 
 ## CENTRALA
-
 Centralny ośrodek monitorujący pracę pociągów. Domyślnie nasłuchuje na nowe
 komunikaty trafiające na serwer kolejkowy. Na ich podstawie wykonuje określone
 reguły biznesowe, nie posiada interfejsu HTTP.
@@ -37,7 +35,6 @@ poniższego scenariusza:
 - Mikroserwis zapisuje w pliku “info.log” czas otwarcia szlabanu.
 
 ## DRÓŻNIK
-
 Symuluje w sposób uproszczony pracę dróżnika pilnującego przejazdów kolejowych.
 Nie komunikuje się z serwerem kolejkowym, posiada interfejs HTTP.
 
@@ -51,7 +48,12 @@ Klient wysyła w ciele żądania informację czy bramka ma się otworzyć czy za
 Aktualny stan szlabanu z ostatnim czasem jego aktualizacji jest przechowywany w bazie danych 
 w dedykowanej tabelce.
 
-## URUCHAMIANIE LOKALNIE:
+## URUCHAMIANIE 
+W katalogu z docker-compose.yml kontenery projektu uruchamiamy poleceniem
+```sh
+docker-compose up -d
+```
+## URUCHAMIANIE LOKALNIE BEZ DOCKERA:
 Każdy z procesów uruchamiamy w oddzielnym oknie konsoli.
 
 Odpalamy lokalnie Redis (który bedzie pełnił funkcję brokera).
@@ -68,13 +70,12 @@ celery beat --app=train.tasks.celery --loglevel=info
 ```
 Z poziomu katalogu "lineman":
 ```sh
-python3 lineman/views.py
+python3 lineman/main.py
 ```
 Z poziomu katalogu "central":
 ```sh
 python3 central/events.py
 ```
-
 
 
 
