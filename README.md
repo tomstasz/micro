@@ -41,8 +41,8 @@ Nie komunikuje się z serwerem kolejkowym, posiada interfejs HTTP.
 Aplikacja wystawia poniżej podane url (w nawiasach zostały podane metody
 wywołania):
 
-- [GET] /api/v1/barrier - podaje aktualny stan szlabanu w formacie: {“status”:STAN}
-- [POST] /api/v1/barrier - otwiera bądź zamyka szlaban bazując na FormData.
+- [GET] http://127.0.0.1:5002/api/v1/barrier - podaje aktualny stan szlabanu w formacie: {“status”:STAN}
+- [POST] http://127.0.0.1:5002/api/v1/barrier - otwiera bądź zamyka szlaban bazując na FormData.
 
 Klient wysyła w ciele żądania informację czy bramka ma się otworzyć czy zamknąć.
 Aktualny stan szlabanu z ostatnim czasem jego aktualizacji jest przechowywany w bazie danych 
@@ -53,6 +53,8 @@ W katalogu z docker-compose.yml kontenery projektu uruchamiamy poleceniem
 ```sh
 docker-compose up -d
 ```
+UWAGA: chcąc potwierdzić czy aktualna prędkość oraz inne dane przekazywane są poprawnie, sprawdzamy pliki log wewnątrz kontenera.
+
 ## URUCHAMIANIE LOKALNIE BEZ DOCKERA:
 Każdy z procesów uruchamiamy w oddzielnym oknie konsoli.
 
